@@ -1,0 +1,5 @@
+com\shoppingcart\model\ShoppingCart.class
+com\shoppingcart\util\LocaleManager.class
+com\shoppingcart\controller\ShoppingCartController.class
+com\shoppingcart\MainApp.class
+com\shoppingcart\model\CartItem.class

@@ -1,0 +1,6 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+JavaFX Shopping Cart - Localization,com.shoppingcart.model,CartItem,0,106,0,8,0,27,0,14,0,10
+JavaFX Shopping Cart - Localization,com.shoppingcart.model,ShoppingCart,0,144,1,13,0,28,1,15,0,9
+JavaFX Shopping Cart - Localization,com.shoppingcart.util,LocaleManager,4,90,2,6,0,22,2,9,0,7
+JavaFX Shopping Cart - Localization,com.shoppingcart.controller,ShoppingCartController,670,0,28,0,133,0,28,0,14,0
+JavaFX Shopping Cart - Localization,com.shoppingcart,MainApp,49,0,0,0,16,0,3,0,3,0

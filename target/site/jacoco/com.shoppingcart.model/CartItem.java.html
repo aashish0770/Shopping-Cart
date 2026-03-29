@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CartItem.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JavaFX Shopping Cart - Localization</a> &gt; <a href="index.source.html" class="el_package">com.shoppingcart.model</a> &gt; <span class="el_source">CartItem.java</span></div><h1>CartItem.java</h1><pre class="source lang-java linenums">package com.shoppingcart.model;
+
+/**
+ * Represents a single item in the shopping cart.
+ */
+public class CartItem {
+
+    private String name;
+    private double price;
+    private int quantity;
+
+<span class="fc" id="L12">    public CartItem(String name, double price, int quantity) {</span>
+<span class="fc bfc" id="L13" title="All 2 branches covered.">        if (price &lt; 0) {</span>
+<span class="fc" id="L14">            throw new IllegalArgumentException(&quot;Price cannot be negative.&quot;);</span>
+        }
+<span class="fc bfc" id="L16" title="All 2 branches covered.">        if (quantity &lt; 0) {</span>
+<span class="fc" id="L17">            throw new IllegalArgumentException(&quot;Quantity cannot be negative.&quot;);</span>
+        }
+<span class="fc" id="L19">        this.name = name;</span>
+<span class="fc" id="L20">        this.price = price;</span>
+<span class="fc" id="L21">        this.quantity = quantity;</span>
+<span class="fc" id="L22">    }</span>
+
+    public CartItem(double price, int quantity) {
+<span class="fc" id="L25">        this(&quot;Item&quot;, price, quantity);</span>
+<span class="fc" id="L26">    }</span>
+
+    public String getName() {
+<span class="fc" id="L29">        return name;</span>
+    }
+
+    public void setName(String name) {
+<span class="fc" id="L33">        this.name = name;</span>
+<span class="fc" id="L34">    }</span>
+
+    public double getPrice() {
+<span class="fc" id="L37">        return price;</span>
+    }
+
+    public void setPrice(double price) {
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        if (price &lt; 0) {</span>
+<span class="fc" id="L42">            throw new IllegalArgumentException(&quot;Price cannot be negative.&quot;);</span>
+        }
+<span class="fc" id="L44">        this.price = price;</span>
+<span class="fc" id="L45">    }</span>
+
+    public int getQuantity() {
+<span class="fc" id="L48">        return quantity;</span>
+    }
+
+    public void setQuantity(int quantity) {
+<span class="fc bfc" id="L52" title="All 2 branches covered.">        if (quantity &lt; 0) {</span>
+<span class="fc" id="L53">            throw new IllegalArgumentException(&quot;Quantity cannot be negative.&quot;);</span>
+        }
+<span class="fc" id="L55">        this.quantity = quantity;</span>
+<span class="fc" id="L56">    }</span>
+
+    /**
+     * Calculates the total cost for this item (price × quantity).
+     *
+     * @return total cost
+     */
+    public double getItemTotal() {
+<span class="fc" id="L64">        return price * quantity;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L69">        return String.format(&quot;CartItem{name='%s', price=%.2f, quantity=%d, total=%.2f}&quot;,</span>
+<span class="fc" id="L70">                name, price, quantity, getItemTotal());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

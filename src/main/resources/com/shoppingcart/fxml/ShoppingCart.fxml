@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.shoppingcart.controller.ShoppingCartController"
+      styleClass="root-container"
+      spacing="0">
+
+    <!-- HEADER -->
+    <HBox styleClass="header-bar" alignment="CENTER_LEFT" spacing="20">
+        <padding><Insets top="16" right="24" bottom="16" left="24"/></padding>
+
+        <Label fx:id="lblTitle" styleClass="title-label" text="Shopping Cart"/>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <Label fx:id="lblSelectLanguage" styleClass="lang-label" text="Language:"/>
+        <ComboBox fx:id="cbLanguage" styleClass="lang-combo" prefWidth="190"/>
+    </HBox>
+
+    <!-- ITEM COUNT ROW -->
+    <HBox styleClass="count-bar" alignment="CENTER_LEFT" spacing="16">
+        <padding><Insets top="14" right="24" bottom="14" left="24"/></padding>
+
+        <Label fx:id="lblNumItems" styleClass="section-label" text="Number of items:"/>
+        <Spinner fx:id="spnNumItems" styleClass="num-spinner" prefWidth="90" editable="true"/>
+        <Button fx:id="btnSetItems" styleClass="btn-secondary" text="Set Items"
+                onAction="#onSetItems"/>
+    </HBox>
+
+    <!-- ITEM ENTRY AREA -->
+    <ScrollPane fx:id="scrollPane" styleClass="items-scroll"
+                fitToWidth="true" VBox.vgrow="ALWAYS">
+        <VBox fx:id="itemsContainer" styleClass="items-container" spacing="8">
+            <padding><Insets top="12" right="24" bottom="12" left="24"/></padding>
+        </VBox>
+    </ScrollPane>
+
+    <!-- ACTION BUTTONS -->
+    <HBox styleClass="action-bar" alignment="CENTER" spacing="20">
+        <padding><Insets top="16" right="24" bottom="16" left="24"/></padding>
+
+        <Button fx:id="btnCalculate" styleClass="btn-primary" text="Calculate Total"
+                onAction="#onCalculate"/>
+        <Button fx:id="btnClear" styleClass="btn-danger" text="Clear"
+                onAction="#onClear"/>
+    </HBox>
+
+    <!--  RESULTS PANEL -->
+    <VBox styleClass="results-panel" spacing="6">
+        <padding><Insets top="16" right="24" bottom="20" left="24"/></padding>
+
+        <HBox alignment="CENTER_LEFT" spacing="8">
+            <Label fx:id="lblTotalCost" styleClass="total-label" text="Total Cost:"/>
+            <Label fx:id="lblTotalValue" styleClass="total-value" text="—"/>
+        </HBox>
+
+        <VBox fx:id="resultsBox" spacing="4" styleClass="results-box">
+            <padding><Insets top="8" right="0" bottom="0" left="0"/></padding>
+        </VBox>
+    </VBox>
+
+</VBox>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LocaleManager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JavaFX Shopping Cart - Localization</a> &gt; <a href="index.source.html" class="el_package">com.shoppingcart.util</a> &gt; <span class="el_source">LocaleManager.java</span></div><h1>LocaleManager.java</h1><pre class="source lang-java linenums">package com.shoppingcart.util;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Locale;
+import java.util.ResourceBundle;
+
+/**
+ * Manages locale switching and resource bundle loading for localization.
+ */
+public class LocaleManager {
+
+    private static final String BUNDLE_BASE_NAME = &quot;com/shoppingcart/i18n/MessagesBundle&quot;;
+
+<span class="fc" id="L14">    private static Locale currentLocale = Locale.ENGLISH;</span>
+<span class="fc" id="L15">    private static ResourceBundle bundle = ResourceBundle.getBundle(</span>
+            BUNDLE_BASE_NAME, currentLocale);
+
+    // Supported locales
+<span class="fc" id="L19">    public static final Locale ENGLISH  = new Locale(&quot;en&quot;, &quot;US&quot;);</span>
+<span class="fc" id="L20">    public static final Locale FINNISH  = new Locale(&quot;fi&quot;, &quot;FI&quot;);</span>
+<span class="fc" id="L21">    public static final Locale SWEDISH  = new Locale(&quot;sv&quot;, &quot;SE&quot;);</span>
+<span class="fc" id="L22">    public static final Locale JAPANESE = new Locale(&quot;ja&quot;, &quot;JP&quot;);</span>
+<span class="fc" id="L23">    public static final Locale ARABIC   = new Locale(&quot;ar&quot;, &quot;AR&quot;);</span>
+
+    private LocaleManager() {}
+
+    /**
+     * Sets the current locale and reloads the resource bundle.
+     *
+     * @param locale the new locale
+     */
+    public static void setLocale(Locale locale) {
+<span class="fc" id="L33">        currentLocale = locale;</span>
+<span class="fc" id="L34">        bundle = ResourceBundle.getBundle(BUNDLE_BASE_NAME, locale);</span>
+<span class="fc" id="L35">    }</span>
+
+    /**
+     * Gets the current active locale.
+     *
+     * @return current locale
+     */
+    public static Locale getCurrentLocale() {
+<span class="fc" id="L43">        return currentLocale;</span>
+    }
+
+    /**
+     * Gets a localized string for the given key.
+     *
+     * @param key the message key
+     * @return localized string
+     */
+    public static String getString(String key) {
+        try {
+<span class="fc" id="L54">            String value = bundle.getString(key);</span>
+            // Ensure UTF-8 encoding for properties read as ISO-8859-1 by older JVMs
+<span class="fc" id="L56">            return new String(value.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);</span>
+<span class="fc" id="L57">        } catch (Exception e) {</span>
+<span class="fc" id="L58">            return &quot;!&quot; + key + &quot;!&quot;;</span>
+        }
+    }
+
+    /**
+     * Gets the current resource bundle.
+     *
+     * @return resource bundle
+     */
+    public static ResourceBundle getBundle() {
+<span class="fc" id="L68">        return bundle;</span>
+    }
+
+    /**
+     * Returns the display name for a locale.
+     *
+     * @param locale the locale
+     * @return display name string
+     */
+    public static String getDisplayName(Locale locale) {
+<span class="fc bfc" id="L78" title="All 2 branches covered.">        if (locale.equals(FINNISH))  return &quot;Suomi (Finnish)&quot;;</span>
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">        if (locale.equals(SWEDISH))  return &quot;Svenska (Swedish)&quot;;</span>
+<span class="pc bpc" id="L80" title="1 of 2 branches missed.">        if (locale.equals(JAPANESE)) return &quot;日本語 (Japanese)&quot;;</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">        if (locale.equals(ARABIC))   return &quot;العربية (Arabic)&quot;;</span>
+<span class="fc" id="L82">        return &quot;English&quot;;</span>
+    }
+
+    /**
+     * Whether the current locale uses RTL text direction.
+     *
+     * @return true if RTL
+     */
+    public static boolean isRTL() {
+<span class="fc" id="L91">        return currentLocale.equals(ARABIC);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

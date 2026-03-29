@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ShoppingCart.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JavaFX Shopping Cart - Localization</a> &gt; <a href="index.source.html" class="el_package">com.shoppingcart.model</a> &gt; <span class="el_source">ShoppingCart.java</span></div><h1>ShoppingCart.java</h1><pre class="source lang-java linenums">package com.shoppingcart.model;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * Represents the shopping cart containing multiple CartItems.
+ */
+public class ShoppingCart {
+
+    private final List&lt;CartItem&gt; items;
+
+<span class="fc" id="L14">    public ShoppingCart() {</span>
+<span class="fc" id="L15">        this.items = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L16">    }</span>
+
+    /**
+     * Adds an item to the cart.
+     *
+     * @param item the CartItem to add
+     */
+    public void addItem(CartItem item) {
+<span class="fc bfc" id="L24" title="All 2 branches covered.">        if (item == null) {</span>
+<span class="fc" id="L25">            throw new IllegalArgumentException(&quot;Item cannot be null.&quot;);</span>
+        }
+<span class="fc" id="L27">        items.add(item);</span>
+<span class="fc" id="L28">    }</span>
+
+    /**
+     * Removes an item from the cart by index.
+     *
+     * @param index the index of the item to remove
+     */
+    public void removeItem(int index) {
+<span class="fc bfc" id="L36" title="All 4 branches covered.">        if (index &lt; 0 || index &gt;= items.size()) {</span>
+<span class="fc" id="L37">            throw new IndexOutOfBoundsException(&quot;Invalid item index: &quot; + index);</span>
+        }
+<span class="fc" id="L39">        items.remove(index);</span>
+<span class="fc" id="L40">    }</span>
+
+    /**
+     * Clears all items from the cart.
+     */
+    public void clear() {
+<span class="fc" id="L46">        items.clear();</span>
+<span class="fc" id="L47">    }</span>
+
+    /**
+     * Returns an unmodifiable view of the items.
+     *
+     * @return list of cart items
+     */
+    public List&lt;CartItem&gt; getItems() {
+<span class="fc" id="L55">        return Collections.unmodifiableList(items);</span>
+    }
+
+    /**
+     * Returns the number of items in the cart.
+     *
+     * @return item count
+     */
+    public int getItemCount() {
+<span class="fc" id="L64">        return items.size();</span>
+    }
+
+    /**
+     * Calculates the total cost of all items in the cart.
+     *
+     * @return overall total cost
+     */
+    public double getTotalCost() {
+<span class="fc" id="L73">        double total = 0.0;</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">        for (CartItem item : items) {</span>
+<span class="fc" id="L75">            total += item.getItemTotal();</span>
+<span class="fc" id="L76">        }</span>
+<span class="fc" id="L77">        return total;</span>
+    }
+
+    /**
+     * Calculates total cost for a specific item by index.
+     *
+     * @param index the item index
+     * @return item's total cost
+     */
+    public double getItemTotal(int index) {
+<span class="pc bpc" id="L87" title="1 of 4 branches missed.">        if (index &lt; 0 || index &gt;= items.size()) {</span>
+<span class="fc" id="L88">            throw new IndexOutOfBoundsException(&quot;Invalid item index: &quot; + index);</span>
+        }
+<span class="fc" id="L90">        return items.get(index).getItemTotal();</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L95">        StringBuilder sb = new StringBuilder(&quot;ShoppingCart{\n&quot;);</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        for (int i = 0; i &lt; items.size(); i++) {</span>
+<span class="fc" id="L97">            sb.append(&quot;  &quot;).append(i + 1).append(&quot;. &quot;).append(items.get(i)).append(&quot;\n&quot;);</span>
+        }
+<span class="fc" id="L99">        sb.append(&quot;  Total: &quot;).append(String.format(&quot;%.2f&quot;, getTotalCost())).append(&quot;\n}&quot;);</span>
+<span class="fc" id="L100">        return sb.toString();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

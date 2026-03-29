@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ShoppingCartController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JavaFX Shopping Cart - Localization</a> &gt; <a href="index.source.html" class="el_package">com.shoppingcart.controller</a> &gt; <span class="el_source">ShoppingCartController.java</span></div><h1>ShoppingCartController.java</h1><pre class="source lang-java linenums">package com.shoppingcart.controller;
+
+import com.shoppingcart.model.CartItem;
+import com.shoppingcart.model.ShoppingCart;
+import com.shoppingcart.util.LocaleManager;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.geometry.NodeOrientation;
+import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
+
+/**
+ * Controller for the Shopping Cart FXML view.
+ * Handles all UI interactions, language switching, and cart calculations.
+ */
+<span class="nc" id="L25">public class ShoppingCartController implements Initializable {</span>
+
+    // ── Top bar ──────────────────────────────────────────────────────────────
+    @FXML private Label  lblTitle;
+    @FXML private Label  lblSelectLanguage;
+    @FXML private ComboBox&lt;String&gt; cbLanguage;
+
+    // ── Item count ───────────────────────────────────────────────────────────
+    @FXML private Label     lblNumItems;
+    @FXML private Spinner&lt;Integer&gt; spnNumItems;
+    @FXML private Button    btnSetItems;
+
+    // ── Dynamic item grid ────────────────────────────────────────────────────
+    @FXML private ScrollPane scrollPane;
+    @FXML private VBox       itemsContainer;
+
+    // ── Results ──────────────────────────────────────────────────────────────
+    @FXML private Button btnCalculate;
+    @FXML private Button btnClear;
+    @FXML private Label  lblTotalCost;
+    @FXML private Label  lblTotalValue;
+    @FXML private VBox   resultsBox;
+
+    // ── Internal state ───────────────────────────────────────────────────────
+<span class="nc" id="L49">    private final ShoppingCart cart = new ShoppingCart();</span>
+
+<span class="nc" id="L51">    private final List&lt;TextField&gt; priceFields    = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L52">    private final List&lt;TextField&gt; quantityFields = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L53">    private final List&lt;Label&gt;     itemLabels     = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L54">    private final List&lt;Label&gt;     priceLabelsList = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L55">    private final List&lt;Label&gt;     qtyLabelsList   = new ArrayList&lt;&gt;();</span>
+
+<span class="nc" id="L57">    private static final String[] LANGUAGE_DISPLAY = {</span>
+            &quot;English&quot;, &quot;Suomi (Finnish)&quot;, &quot;Svenska (Swedish)&quot;,
+            &quot;日本語 (Japanese)&quot;, &quot;العربية (Arabic)&quot;
+    };
+<span class="nc" id="L61">    private static final Locale[] LOCALES = {</span>
+            LocaleManager.ENGLISH, LocaleManager.FINNISH, LocaleManager.SWEDISH,
+            LocaleManager.JAPANESE, LocaleManager.ARABIC
+    };
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        // Populate language ComboBox
+<span class="nc" id="L69">        cbLanguage.getItems().addAll(LANGUAGE_DISPLAY);</span>
+<span class="nc" id="L70">        cbLanguage.getSelectionModel().selectFirst();</span>
+<span class="nc" id="L71">        cbLanguage.setOnAction(e -&gt; onLanguageChange());</span>
+
+        // Spinner: 1–20 items, default 3
+<span class="nc" id="L74">        SpinnerValueFactory&lt;Integer&gt; factory =</span>
+                new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 20, 3);
+<span class="nc" id="L76">        spnNumItems.setValueFactory(factory);</span>
+
+<span class="nc" id="L78">        applyLanguage();</span>
+<span class="nc" id="L79">        buildItemRows(spnNumItems.getValue());</span>
+<span class="nc" id="L80">    }</span>
+
+    // ─────────────────────────────────────────────────────────────────────────
+    //  Language switching
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private void onLanguageChange() {
+<span class="nc" id="L87">        int idx = cbLanguage.getSelectionModel().getSelectedIndex();</span>
+<span class="nc bnc" id="L88" title="All 4 branches missed.">        if (idx &gt;= 0 &amp;&amp; idx &lt; LOCALES.length) {</span>
+<span class="nc" id="L89">            LocaleManager.setLocale(LOCALES[idx]);</span>
+<span class="nc" id="L90">            applyLanguage();</span>
+<span class="nc" id="L91">            refreshItemRowLabels();</span>
+<span class="nc" id="L92">            clearResults();</span>
+        }
+<span class="nc" id="L94">    }</span>
+
+    private void applyLanguage() {
+<span class="nc" id="L97">        boolean rtl = LocaleManager.isRTL();</span>
+<span class="nc bnc" id="L98" title="All 2 branches missed.">        NodeOrientation orientation = rtl</span>
+<span class="nc" id="L99">                ? NodeOrientation.RIGHT_TO_LEFT</span>
+<span class="nc" id="L100">                : NodeOrientation.LEFT_TO_RIGHT;</span>
+
+        // Update top-level orientation
+<span class="nc bnc" id="L103" title="All 2 branches missed.">        if (lblTitle != null) {</span>
+<span class="nc" id="L104">            lblTitle.getScene().getRoot().setNodeOrientation(orientation);</span>
+        }
+
+<span class="nc" id="L107">        lblTitle.setText(LocaleManager.getString(&quot;app.title&quot;));</span>
+<span class="nc" id="L108">        lblSelectLanguage.setText(LocaleManager.getString(&quot;label.selectLanguage&quot;));</span>
+<span class="nc" id="L109">        lblNumItems.setText(LocaleManager.getString(&quot;label.numItems&quot;));</span>
+<span class="nc" id="L110">        btnSetItems.setText(LocaleManager.getString(&quot;button.setItems&quot;));</span>
+<span class="nc" id="L111">        btnCalculate.setText(LocaleManager.getString(&quot;button.calculate&quot;));</span>
+<span class="nc" id="L112">        btnClear.setText(LocaleManager.getString(&quot;button.clear&quot;));</span>
+<span class="nc" id="L113">        lblTotalCost.setText(LocaleManager.getString(&quot;label.totalCost&quot;));</span>
+<span class="nc" id="L114">    }</span>
+
+    // ─────────────────────────────────────────────────────────────────────────
+    //  Item row building
+    // ─────────────────────────────────────────────────────────────────────────
+
+    @FXML
+    private void onSetItems() {
+<span class="nc" id="L122">        int count = spnNumItems.getValue();</span>
+<span class="nc" id="L123">        buildItemRows(count);</span>
+<span class="nc" id="L124">        clearResults();</span>
+<span class="nc" id="L125">    }</span>
+
+    private void buildItemRows(int count) {
+<span class="nc" id="L128">        itemsContainer.getChildren().clear();</span>
+<span class="nc" id="L129">        priceFields.clear();</span>
+<span class="nc" id="L130">        quantityFields.clear();</span>
+<span class="nc" id="L131">        itemLabels.clear();</span>
+<span class="nc" id="L132">        priceLabelsList.clear();</span>
+<span class="nc" id="L133">        qtyLabelsList.clear();</span>
+
+<span class="nc bnc" id="L135" title="All 2 branches missed.">        for (int i = 1; i &lt;= count; i++) {</span>
+<span class="nc" id="L136">            HBox row = createItemRow(i);</span>
+<span class="nc" id="L137">            itemsContainer.getChildren().add(row);</span>
+        }
+<span class="nc" id="L139">    }</span>
+
+    private HBox createItemRow(int index) {
+<span class="nc" id="L142">        HBox row = new HBox(12);</span>
+<span class="nc" id="L143">        row.getStyleClass().add(&quot;item-row&quot;);</span>
+
+        // Item number label
+<span class="nc" id="L146">        Label lblItem = new Label(</span>
+<span class="nc" id="L147">                LocaleManager.getString(&quot;label.item&quot;) + &quot; &quot; + index + &quot;:&quot;);</span>
+<span class="nc" id="L148">        lblItem.getStyleClass().add(&quot;item-label&quot;);</span>
+<span class="nc" id="L149">        lblItem.setPrefWidth(80);</span>
+<span class="nc" id="L150">        itemLabels.add(lblItem);</span>
+
+        // Price label + field
+<span class="nc" id="L153">        Label lblPrice = new Label(LocaleManager.getString(&quot;label.price&quot;));</span>
+<span class="nc" id="L154">        lblPrice.getStyleClass().add(&quot;field-label&quot;);</span>
+<span class="nc" id="L155">        priceLabelsList.add(lblPrice);</span>
+
+<span class="nc" id="L157">        TextField tfPrice = new TextField(&quot;0.00&quot;);</span>
+<span class="nc" id="L158">        tfPrice.getStyleClass().add(&quot;price-field&quot;);</span>
+<span class="nc" id="L159">        tfPrice.setPrefWidth(100);</span>
+<span class="nc" id="L160">        priceFields.add(tfPrice);</span>
+
+        // Quantity label + field
+<span class="nc" id="L163">        Label lblQty = new Label(LocaleManager.getString(&quot;label.quantity&quot;));</span>
+<span class="nc" id="L164">        lblQty.getStyleClass().add(&quot;field-label&quot;);</span>
+<span class="nc" id="L165">        qtyLabelsList.add(lblQty);</span>
+
+<span class="nc" id="L167">        TextField tfQty = new TextField(&quot;1&quot;);</span>
+<span class="nc" id="L168">        tfQty.getStyleClass().add(&quot;qty-field&quot;);</span>
+<span class="nc" id="L169">        tfQty.setPrefWidth(80);</span>
+<span class="nc" id="L170">        quantityFields.add(tfQty);</span>
+
+<span class="nc" id="L172">        row.getChildren().addAll(lblItem, lblPrice, tfPrice, lblQty, tfQty);</span>
+<span class="nc" id="L173">        return row;</span>
+    }
+
+    private void refreshItemRowLabels() {
+<span class="nc bnc" id="L177" title="All 2 branches missed.">        for (int i = 0; i &lt; itemLabels.size(); i++) {</span>
+<span class="nc" id="L178">            itemLabels.get(i).setText(</span>
+<span class="nc" id="L179">                    LocaleManager.getString(&quot;label.item&quot;) + &quot; &quot; + (i + 1) + &quot;:&quot;);</span>
+        }
+<span class="nc bnc" id="L181" title="All 2 branches missed.">        for (Label l : priceLabelsList) {</span>
+<span class="nc" id="L182">            l.setText(LocaleManager.getString(&quot;label.price&quot;));</span>
+<span class="nc" id="L183">        }</span>
+<span class="nc bnc" id="L184" title="All 2 branches missed.">        for (Label l : qtyLabelsList) {</span>
+<span class="nc" id="L185">            l.setText(LocaleManager.getString(&quot;label.quantity&quot;));</span>
+<span class="nc" id="L186">        }</span>
+<span class="nc" id="L187">    }</span>
+
+    // ─────────────────────────────────────────────────────────────────────────
+    //  Calculation
+    // ─────────────────────────────────────────────────────────────────────────
+
+    @FXML
+    private void onCalculate() {
+<span class="nc" id="L195">        cart.clear();</span>
+<span class="nc" id="L196">        resultsBox.getChildren().clear();</span>
+
+<span class="nc" id="L198">        boolean hasError = false;</span>
+
+<span class="nc bnc" id="L200" title="All 2 branches missed.">        for (int i = 0; i &lt; priceFields.size(); i++) {</span>
+<span class="nc" id="L201">            String priceText = priceFields.get(i).getText().trim();</span>
+<span class="nc" id="L202">            String qtyText   = quantityFields.get(i).getText().trim();</span>
+
+            try {
+<span class="nc" id="L205">                double price = Double.parseDouble(priceText);</span>
+<span class="nc" id="L206">                int    qty   = Integer.parseInt(qtyText);</span>
+
+<span class="nc bnc" id="L208" title="All 4 branches missed.">                if (price &lt; 0 || qty &lt; 0) {</span>
+<span class="nc" id="L209">                    showAlert(LocaleManager.getString(&quot;error.negativeValue&quot;));</span>
+<span class="nc" id="L210">                    hasError = true;</span>
+<span class="nc" id="L211">                    break;</span>
+                }
+
+<span class="nc" id="L214">                CartItem item = new CartItem(</span>
+<span class="nc" id="L215">                        LocaleManager.getString(&quot;label.item&quot;) + &quot; &quot; + (i + 1),</span>
+                        price, qty);
+<span class="nc" id="L217">                cart.addItem(item);</span>
+
+                // Per-item result row
+<span class="nc" id="L220">                HBox resultRow = new HBox(10);</span>
+<span class="nc" id="L221">                resultRow.getStyleClass().add(&quot;result-row&quot;);</span>
+
+<span class="nc" id="L223">                Label nameLabel = new Label(item.getName() + &quot;:&quot;);</span>
+<span class="nc" id="L224">                nameLabel.getStyleClass().add(&quot;result-item-name&quot;);</span>
+
+<span class="nc" id="L226">                Label calcLabel = new Label(</span>
+<span class="nc" id="L227">                        String.format(&quot;%.2f × %d = %.2f&quot;, price, qty, item.getItemTotal()));</span>
+<span class="nc" id="L228">                calcLabel.getStyleClass().add(&quot;result-calc&quot;);</span>
+
+<span class="nc" id="L230">                resultRow.getChildren().addAll(nameLabel, calcLabel);</span>
+<span class="nc" id="L231">                resultsBox.getChildren().add(resultRow);</span>
+
+<span class="nc" id="L233">            } catch (NumberFormatException ex) {</span>
+<span class="nc" id="L234">                showAlert(LocaleManager.getString(&quot;error.invalidInput&quot;) + &quot; (Item &quot; + (i + 1) + &quot;)&quot;);</span>
+<span class="nc" id="L235">                hasError = true;</span>
+<span class="nc" id="L236">                break;</span>
+<span class="nc" id="L237">            }</span>
+        }
+
+<span class="nc bnc" id="L240" title="All 2 branches missed.">        if (!hasError) {</span>
+            // Divider
+<span class="nc" id="L242">            Separator sep = new Separator();</span>
+<span class="nc" id="L243">            sep.getStyleClass().add(&quot;result-separator&quot;);</span>
+<span class="nc" id="L244">            resultsBox.getChildren().add(sep);</span>
+
+            // Total
+<span class="nc" id="L247">            lblTotalValue.setText(String.format(&quot;%.2f €&quot;, cart.getTotalCost()));</span>
+        }
+<span class="nc" id="L249">    }</span>
+
+    @FXML
+    private void onClear() {
+<span class="nc bnc" id="L253" title="All 2 branches missed.">        for (TextField tf : priceFields)    tf.setText(&quot;0.00&quot;);</span>
+<span class="nc bnc" id="L254" title="All 2 branches missed.">        for (TextField tf : quantityFields) tf.setText(&quot;1&quot;);</span>
+<span class="nc" id="L255">        clearResults();</span>
+<span class="nc" id="L256">    }</span>
+
+    private void clearResults() {
+<span class="nc" id="L259">        resultsBox.getChildren().clear();</span>
+<span class="nc" id="L260">        lblTotalValue.setText(&quot;—&quot;);</span>
+<span class="nc" id="L261">    }</span>
+
+    // ─────────────────────────────────────────────────────────────────────────
+    //  Helpers
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private void showAlert(String message) {
+<span class="nc" id="L268">        Alert alert = new Alert(Alert.AlertType.ERROR);</span>
+<span class="nc" id="L269">        alert.setTitle(LocaleManager.getString(&quot;error.title&quot;));</span>
+<span class="nc" id="L270">        alert.setHeaderText(null);</span>
+<span class="nc" id="L271">        alert.setContentText(message);</span>
+<span class="nc" id="L272">        alert.showAndWait();</span>
+<span class="nc" id="L273">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
